@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Bases</title>
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h3 class="text-center mb-4">Conversor de Bases</h3>
+
+        <!-- Campo de entrada -->
+        <div class="mb-3">
+            <label for="numero" class="form-label">Digite um número:</label>
+            <input 
+                type="number" 
+                id="numero" 
+                class="form-control" 
+                placeholder="Digite um valor numérico"
+            >
+        </div>
+
+        <!-- Botões -->
+        <div class="d-grid gap-2">
+            <button class="btn btn-primary">Converter para Binário</button>
+            <button class="btn btn-success">Converter para Decimal</button>
+            <button class="btn btn-warning">Converter para Hexadecimal</button>
+            <button class="btn btn-danger">Converter para Octal</button>
+        </div>
+
+        <!-- Resultado (opcional já deixar pronto) -->
+        <div class="mt-4">
+            <h5>Resultado:</h5>
+            <div id="resultado" class="alert alert-secondary">
+                Nenhum cálculo realizado
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    const input = document.getElementById("numero");
+    const resultadoDiv = document.getElementById("resultado");
+
+    const botoes = document.querySelectorAll("button");
+
+    botoes[0].onclick = () => converter(2);
+    botoes[1].onclick = () => converter(10);
+    botoes[2].onclick = () => converter(16);
+    botoes[3].onclick = () => converter(8);
+
+    function converter(base) {
+        let numero = parseInt(input.value);
+
+        if (isNaN(numero)) {
+            resultadoDiv.innerHTML = "Digite um número válido!";
+            return;
+        }
+
+        if (base === 10) {
+            resultadoDiv.innerHTML = `<strong>Resultado:</strong> ${numero} (já está em decimal)`;
+            return;
+        }
+
+        let passos = [];
+        let restos = [];
+        let original = numero;
+
+        // Conversão por divisões sucessivas
+        while (numero > 0) {
+            let quociente = Math.floor(numero / base);
+            let resto = numero % base;
+
+            passos.push(`${numero} ÷ ${base} = ${quociente} (resto ${resto})`);
+            restos.push(resto);
+
+            numero = quociente;
+        }
+
+        // Para hexadecimal (converter valores > 9)
+        let resultado = restos.reverse().map(r => {
+            if (base === 16) {
+                if (r === 10) return "A";
+                if (r === 11) return "B";
+                if (r === 12) return "C";
+                if (r === 13) return "D";
+                if (r === 14) return "E";
+                if (r === 15) return "F";
+            }
+            return r;
+        }).join("");
+
+        // Montar saída
+        resultadoDiv.innerHTML = `
+            <strong>Conversão de ${original} para base ${base}:</strong><br><br>
+            <strong>Passo a passo:</strong><br>
+            ${passos.join("<br>")}
+            <br><br>
+            <strong>Resultado final:</strong> ${resultado}
+        `;
+    }
+</script>
+
+</html>
